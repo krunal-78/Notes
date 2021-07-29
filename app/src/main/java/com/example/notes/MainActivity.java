@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -16,24 +17,31 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity implements InotesRVClicked{
-    private NoteViewModel noteViewModel;
-    private EditText inputNote;
-    private Button addNote;
     private RecyclerView recyclerView;
-
+    private NoteViewModel noteViewModel;
+    private FloatingActionButton floatingActionButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        inputNote = findViewById(R.id.inputNote);
-        addNote = findViewById(R.id.addNote);
+
         recyclerView = findViewById(R.id.recyclerView);
         // making adapter and setting layout manager as Linear layout manager and settting adapter;
+        floatingActionButton = findViewById(R.id.floatingActionButton);
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,addNoteActivity.class);
+                startActivity(intent);
+            }
+        });
         NotesAdapter notesAdapter = new NotesAdapter(this);
         recyclerView.setAdapter(notesAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -48,22 +56,7 @@ public class MainActivity extends AppCompatActivity implements InotesRVClicked{
                 Log.d("krunal", "updated list!");
             }
         });
-        addNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String noteText = inputNote.getText().toString();
-                if(noteText.isEmpty()){
-                    Toast.makeText(MainActivity.this, "Can't insert empty text!", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    noteViewModel.Insert(new Notes(noteText));
-                    Log.d("krunal","Inserted "+noteText);
-//                    Toast.makeText(MainActivity.this, noteText+" Inserted!", Toast.LENGTH_SHORT).show();
 
-                }
-//                noteViewModel.Insert(new Notes("krunal"));
-            }
-        });
     }
 
     @Override
